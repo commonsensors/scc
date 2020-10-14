@@ -14,6 +14,8 @@ ACCESS_SECRET = environ['ACCESS_SECRET']
 USER_TO_COPY = environ['USER_TO_COPY']
 NUM_OF_TWEETS = 2000  # number of latest tweets to be read from the bot
 
+last_seen_mention_id = "1316468675927564288"
+
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True)
@@ -99,10 +101,7 @@ def generate_tweet(word_dictionary):
 
 # function that searches for mentions and responds with a generated tweet
 def reply_to_mentions(word_dictionary):
-    # read the last mention the bot has seen, to only respond to the ones after it
-    f = open('last_seen_mention_id.txt', 'r')
-    last_seen_mention_id = int(f.read().strip())
-    f.close()
+    global last_seen_mention_id
 
     # scan for new mentions
     mentions = api.mentions_timeline(last_seen_mention_id, tweet_mode="extended")
@@ -112,26 +111,24 @@ def reply_to_mentions(word_dictionary):
         if mention.user.screen_name != api.me().screen_name:
             last_seen_mention_id = mention.id
 
-            f = open('last_seen_mention_id.txt', 'w')
-            f.write(str(last_seen_mention_id))
-            f.close()
-
-            print('AWAKEN... GENERATING MENTION REPLY TO ' +
-                  mention.user.screen_name + '...')
+            print('\nAWAKEN... GENERATING MENTION REPLY TO ' + mention.user.screen_name + '...')
+            print('last seen mention ID: ' + str(last_seen_mention_id) + '\n')
             api.update_status('@' + mention.user.screen_name + ' ' + generate_tweet(word_dictionary), mention.id)
 
 
 while True:
+    print("***************************************")
     print('creating the markov chain dictionary...')
     word_dictionary = markov()
 
     reply_to_mentions(word_dictionary)
 
-	# post randomly, once for every 150 tries
+    # post randomly, once for every 150 tries
     if random.randint(1, 150) == 1:
-        print('AWAKEN... GENERATING TWEET...')
+        print('\nAWAKEN... GENERATING TWEET...')
         api.update_status(generate_tweet(word_dictionary))
 
-    print('sleep mode for 1 minute...\n')
+    print('\nsleep mode for 1 minute...')
+    print("***************************************")
 
     time.sleep(60)
