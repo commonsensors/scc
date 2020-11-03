@@ -14,7 +14,7 @@ ACCESS_SECRET = environ['ACCESS_SECRET']
 USER_TO_COPY = environ['USER_TO_COPY']
 NUM_OF_TWEETS = 2000  # number of latest tweets to be read from the bot
 
-last_seen_mention_id = 1316468675927564288
+last_seen_mention_id = 1323729574392455168
 
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
