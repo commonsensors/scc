@@ -117,10 +117,10 @@ while True:
     print('creating the markov chain dictionary...')
     word_dictionary = markov()
 
-    #reply_to_mentions(word_dictionary)
+    reply_to_mentions(word_dictionary)
 
     # post randomly, once for every 150 tries
-    if random.randint(1, 150) == 1:
+    if random.randint(1, 500) == 1:
         print('\nAWAKEN... GENERATING TWEET...')
         api.update_status(generate_tweet(word_dictionary))
 
